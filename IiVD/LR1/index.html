@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная работа №1 — Информационная графика</title>
+  
+  <!-- Шрифт Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #f4f6f4;
+      --bg-card: #ffffff;
+      --text-main: #18221b;
+      --text-muted: #57655d;
+      --border-color: #d1dbd4;
+      --border-dark: #8c9e93;
+
+      /* Нежно-зеленая гамма */
+      --green-dark: #1b533a;       /* Основной акцент ТехСтанкоМаш */
+      --green-main: #287251;       /* Акцентные столбцы */
+      --green-light: #52a27e;      /* Второстепенные зеленые */
+      --green-soft: #8ecaa8;       /* Мягкие доли */
+      --green-bg: #eaf3ee;         /* Фоновые плашки */
+
+      /* Контрастные и нейтральные */
+      --color-loss: #b91c1c;        /* Убыток */
+      --color-competitor: #b45309;  /* РусСтройСтанок / Конкурент */
+      --color-neutral: #93a199;     /* Нейтральные компании */
+      --color-neutral-light: #e2e8e3;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      border-radius: 0 !important; /* Строгий академический стиль без скруглений */
+    }
+
+    body {
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Увеличена ширина контейнера для свободного размещения надписей */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Верхний блок: Метаданные студента и вуза */
+    .student-passport {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-top: 4px solid var(--green-dark);
+      padding: 24px 32px;
+      margin-bottom: 32px;
+    }
+
+    .passport-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .passport-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .passport-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .passport-field .label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+    }
+
+    .passport-field .value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .passport-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .university-sub {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--green-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .btn-print {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      font-size: 12.5px;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      border: 1px solid var(--green-dark);
+      background: var(--green-dark);
+      color: #ffffff;
+      transition: background 0.15s ease;
+    }
+
+    .btn-print:hover {
+      background: var(--green-main);
+      border-color: var(--green-main);
+    }
+
+    /* Сетка в 1 колонку */
+    .dashboard-single-col {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 36px;
+    }
+
+    /* Карточка отчета */
+    .report-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--green-main);
+      padding: 32px 36px 24px 36px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .task-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      background: var(--green-bg);
+      color: var(--green-dark);
+      border: 1px solid var(--border-color);
+    }
+
+    .chart-heading {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.35;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+
+    .chart-description {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.45;
+    }
+
+    .chart-box {
+      position: relative;
+      width: 100%;
+      min-height: 340px;
+    }
+
+    .report-card-footer {
+      margin-top: 24px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .report-card-footer strong {
+      color: var(--text-main);
+    }
+
+    /* Стили для печати в PDF */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .container {
+        max-width: 100%;
+      }
+      .btn-print {
+        display: none;
+      }
+      .report-card {
+        border: 1px solid #718096;
+        border-left: 4px solid #1b533a;
+        page-break-inside: avoid;
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Метаданные студента и вуза -->
+  <header class="student-passport">
+    <div class="passport-grid">
+      <div class="passport-field">
+        <span class="label">Студент</span>
+        <span class="value">Замостьянов Николай Владиславович</span>
+      </div>
+      <div class="passport-field">
+        <span class="label">Учебная группа</span>
+        <span class="value">ИДМ-26-08</span>
+      </div>
+    </div>
+    <div class="passport-footer">
+      <div class="university-sub">
+        МГТУ «СТАНКИН» • Инфографика и визуализация данных • Вариант 1
+      </div>
+      <button class="btn-print" onclick="window.print()">
+        Печать / Сохранить в PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- Сетка графиков в 1 колонку -->
+  <main class="dashboard-single-col">
+
+    <!-- Задание 1 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 1</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Выполнение целевых показателей</span>
+      </div>
+      <h2 class="chart-heading">
+        Только половина филиалов (3 из 6) выполнила установленный план продаж в 2,0 млн рублей
+      </h2>
+      <p class="chart-description">
+        Фактический объем продаж филиалов за 2020 год в сопоставлении с <span style="color:var(--green-dark); font-weight:700;">плановым нормативом (2,0 млн руб.)</span>, млн руб.
+      </p>
+      <div class="chart-box">
+        <canvas id="chart1"></canvas>
+      </div>
+      <footer class="report-card-footer">
+        <span>Норматив: <strong>2,0 млн руб.</strong> (выполнили Центральный, Северо-запад, Сибирь)</span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+    <!-- Задание 2 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 2</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Финансовый результат отрасли</span>
+      </div>
+      <h2 class="chart-heading">
+        Более половины предприятий (62,5%) завершили год с прибылью: <span style="color:var(--green-dark);">«ТехСтанкоМаш»</span> на 2-м месте
+      </h2>
+      <p class="chart-description">
+        Чистый финансовый результат компаний за 2018 год (<span style="color:var(--green-main); font-weight:700;">прибыль</span> / <span style="color:var(--color-loss); font-weight:700;">убыток</span>), рассчитанный как доходы минус затраты, млн руб.
+      </p>
+      <div class="chart-box" style="min-height: 380px;">
+        <canvas id="chart2"></canvas>
+      </div>
+      <footer class="report-card-footer">
+        <span>Прибыль «ТехСтанкоМаш»: <strong>+31,08 млн руб.</strong> (5 из 8 предприятий безубыточны)</span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+    <!-- Задание 3 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 3</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Сравнение продуктовых портфелей</span>
+      </div>
+      <h2 class="chart-heading">
+        «ТехСтанкоМаш» доминирует в сегменте расточных станков, но кратно уступает конкуренту во фрезерных и токарных
+      </h2>
+      <p class="chart-description">
+        Доли видов продукции в общей структуре реализации <span style="color:var(--green-dark); font-weight:700;">«ТехСтанкоМаш»</span> в сравнении с конкурентом <span style="color:var(--color-competitor); font-weight:700;">«РусСтройСтанок»</span>, %
+      </p>
+      <div class="chart-box" id="containerDumbbell" style="min-height: 290px;">
+        <!-- Dumbbell SVG chart -->
+      </div>
+      <footer class="report-card-footer">
+        <span>Максимальное расхождение: <strong>+24,9 п.п.</strong> по расточным станкам</span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+    <!-- Задание 4 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 4</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Базисные темпы роста</span>
+      </div>
+      <h2 class="chart-heading">
+        Объем продаж монотонно рос 5 лет подряд (+37%), тогда как чистая прибыль после пика 2019 года резко снизилась
+      </h2>
+      <p class="chart-description">
+        Индексы динамики <span style="color:var(--green-dark); font-weight:700;">объема реализации</span> и <span style="color:var(--color-competitor); font-weight:700;">прибыли</span> предприятия «ТехСтанкоМаш» (базис: 2016 г. = 100%)
+      </p>
+      <div class="chart-box">
+        <canvas id="chart4"></canvas>
+      </div>
+      <footer class="report-card-footer">
+        <span>Базовые значения 2016 г. (100%): продажи — <strong>387 млн руб.</strong>, прибыль — <strong>24 млн руб.</strong></span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+    <!-- Задание 5 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 5</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Концентрация отраслевого рынка</span>
+      </div>
+      <h2 class="chart-heading">
+        Около половины станкостроительного рынка (51%) контролируется двумя крупнейшими игроками
+      </h2>
+      <p class="chart-description">
+        Доли компаний в общем отраслевом объеме реализации станкостроительной продукции в 2020 году, %
+      </p>
+      <div class="chart-box" style="min-height: 420px;">
+        <canvas id="chart5"></canvas>
+      </div>
+      <footer class="report-card-footer">
+        <span><strong style="color:var(--green-dark);">РусСтанкоСтрой (28%)</strong> + <strong style="color:var(--green-light);">ТехСтанкоМаш (23%)</strong> = 51% совокупной доли рынка</span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+    <!-- Задание 6 -->
+    <article class="report-card">
+      <div class="task-meta">
+        <span class="task-tag">Задание 6</span>
+        <span style="font-size: 12px; color: var(--text-muted);">Макро- и микроструктура продаж</span>
+      </div>
+      <h2 class="chart-heading">
+        «ТехСтанкоМаш» удерживает второе место на рынке (19,3%), где половину корпоративной выручки формируют фрезерные станки
+      </h2>
+      <p class="chart-description">
+        Доли производителей на рынке станкостроения в 2020 г. (слева, %) и продуктовая структура выручки <span style="color:var(--green-dark); font-weight:700;">«ТехСтанкоМаш»</span> (справа, млн руб.)
+      </p>
+      <div class="chart-box" style="display: flex; gap: 32px; flex-wrap: wrap;">
+        <div style="flex: 1.25; min-width: 340px; position: relative; min-height: 320px;">
+          <canvas id="chart6Market"></canvas>
+        </div>
+        <div style="flex: 1; min-width: 300px; position: relative; min-height: 320px;">
+          <canvas id="chart6Product"></canvas>
+        </div>
+      </div>
+      <footer class="report-card-footer">
+        <span>Суммарный объем продаж «ТехСтанкоМаш»: <strong>60,0 млн руб.</strong></span>
+        <span>Источник: ЭОС «МГТУ СТАНКИН»</span>
+      </footer>
+    </article>
+
+  </main>
+</div>
+
+<script>
+  // Глобальная настройка шрифта Montserrat для Chart.js
+  Chart.defaults.font.family = "'Montserrat', sans-serif";
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = '#57655d';
+
+  // ==========================================
+  // ЗАДАНИЕ 1: Bar chart с линией плана 2.0 млн
+  // ==========================================
+  const ctx1 = document.getElementById('chart1').getContext('2d');
+  new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: ['Центральный', 'Северо-запад', 'Сибирь', 'Урал', 'Поволжье', 'Дальний Восток'],
+      datasets: [{
+        data: [4.1, 2.5, 2.5, 1.7, 1.5, 0.9],
+        backgroundColor: [
+          '#1b533a', '#1b533a', '#1b533a', // >= 2.0 млн
+          '#93a199', '#93a199', '#93a199'  // < 2.0 млн
+        ],
+        barThickness: 24
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 16 }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => `Продажи: ${c.raw} млн руб. (${c.raw >= 2 ? 'План выполнен' : 'План не выполнен'})`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#e2e8e3' },
+          title: { display: true, text: 'Объем реализации, млн руб.', font: { weight: 600 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            color: '#18221b',
+            font: { weight: 600 },
+            padding: 10
+          }
+        }
+      }
+    },
+    plugins: [{
+      id: 'targetLine',
+      afterDraw(chart) {
+        const { ctx, chartArea: { top, bottom }, scales: { x } } = chart;
+        const xPos = x.getPixelForValue(2.0);
+        ctx.save();
+        ctx.beginPath();
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#1b533a';
+        ctx.moveTo(xPos, top);
+        ctx.lineTo(xPos, bottom);
+        ctx.stroke();
+
+        ctx.fillStyle = '#1b533a';
+        ctx.font = 'bold 11px Montserrat';
+        ctx.fillText('План: 2,0 млн', xPos + 8, top + 14);
+        ctx.restore();
+      }
+    }]
+  });
+
+  // ==========================================
+  // ЗАДАНИЕ 2: Двусторонняя диаграмма прибыли/убытка
+  // ==========================================
+  const ctx2 = document.getElementById('chart2').getContext('2d');
+  const task2Data = [
+    { name: 'Компания Б', val: 52.0 },
+    { name: 'ТехСтанкоМаш', val: 31.08, highlight: true },
+    { name: 'Компания В', val: 25.3 },
+    { name: 'Компания Д', val: 19.88 },
+    { name: 'Компания Ж', val: 10.11 },
+    { name: 'Компания А', val: -10.31 },
+    { name: 'Компания Г', val: -20.12 },
+    { name: 'Компания Е', val: -62.0 }
+  ];
+
+  new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: task2Data.map(d => d.name),
+      datasets: [{
+        data: task2Data.map(d => d.val),
+        backgroundColor: task2Data.map(d => {
+          if (d.highlight) return '#1b533a';       // ТехСтанкоМаш
+          return d.val >= 0 ? '#57655d' : '#b91c1c';
+        }),
+        barThickness: 20
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 16 }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => `Чистый итог: ${c.raw > 0 ? '+' : ''}${c.raw} млн руб.`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: (c) => c.tick.value === 0 ? '#18221b' : '#e2e8e3' },
+          title: { display: true, text: 'млн руб. (прибыль > 0 / убыток < 0)', font: { weight: 600 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            padding: 10,
+            color: (c) => task2Data[c.index]?.highlight ? '#1b533a' : '#18221b',
+            font: (c) => ({
+              weight: task2Data[c.index]?.highlight ? 'bold' : '600'
+            })
+          }
+        }
+      }
+    }
+  });
+
+  // ==========================================
+  // ЗАДАНИЕ 3: SVG Dumbbell Chart (Гантели)
+  // ==========================================
+  const container3 = document.getElementById('containerDumbbell');
+  const d3Data = [
+    { label: 'Расточные станки', us: 39.8, them: 14.9 },
+    { label: 'Промышленные роботы', us: 20.6, them: 19.9 },
+    { label: 'Сверлильные станки', us: 16.2, them: 18.6 },
+    { label: 'Токарные станки', us: 15.0, them: 25.3 },
+    { label: 'Фрезерные станки', us: 8.4, them: 21.3 }
+  ];
+
+  // Зона шкалы сдвинута правее (x = 240..840), что гарантирует комфортное размещение текста слева
+  let svg3 = `
+    <svg viewBox="0 0 900 250" style="width: 100%; height: 100%; font-family: Montserrat, sans-serif;">
+      <!-- Вертикальная сетка -->
+      <g stroke="#e2e8e3" stroke-width="1">
+        <line x1="240" y1="20" x2="240" y2="210" />
+        <line x1="390" y1="20" x2="390" y2="210" />
+        <line x1="540" y1="20" x2="540" y2="210" />
+        <line x1="690" y1="20" x2="690" y2="210" />
+        <line x1="840" y1="20" x2="840" y2="210" />
+      </g>
+      <!-- Подписи шкалы -->
+      <g font-size="11" fill="#57655d" font-weight="600" text-anchor="middle">
+        <text x="240" y="230">0%</text>
+        <text x="390" y="230">10%</text>
+        <text x="540" y="230">20%</text>
+        <text x="690" y="230">30%</text>
+        <text x="840" y="230">40%</text>
+      </g>
+  `;
+
+  d3Data.forEach((row, idx) => {
+    const y = 40 + idx * 36;
+    // 0% -> 240, 40% -> 840 (15px на 1%)
+    const xUs = 240 + row.us * 15;
+    const xThem = 240 + row.them * 15;
+
+    svg3 += `
+      <!-- Категория (слева от x=220) -->
+      <text x="220" y="${y + 4}" font-size="12" font-weight="600" fill="#18221b" text-anchor="end">${row.label}</text>
+      
+      <!-- Линия разрыва -->
+      <line x1="${Math.min(xUs, xThem)}" y1="${y}" x2="${Math.max(xUs, xThem)}" y2="${y}" stroke="#cbd5e1" stroke-width="3" />
+      
+      <!-- Точка РусСтройСтанок (Охра) -->
+      <rect x="${xThem - 5}" y="${y - 5}" width="10" height="10" fill="#b45309" />
+      <text x="${xThem}" y="${y - 9}" font-size="10.5" font-weight="700" fill="#b45309" text-anchor="middle">${row.them}%</text>
+
+      <!-- Точка ТехСтанкоМаш (Хвоя) -->
+      <rect x="${xUs - 6}" y="${y - 6}" width="12" height="12" fill="#1b533a" />
+      <text x="${xUs}" y="${y + 19}" font-size="10.5" font-weight="700" fill="#1b533a" text-anchor="middle">${row.us}%</text>
+    `;
+  });
+
+  svg3 += `</svg>`;
+  container3.innerHTML = svg3;
+
+  // ==========================================
+  // ЗАДАНИЕ 4: Линейный индексный график (2016 = 100%)
+  // ==========================================
+  const ctx4 = document.getElementById('chart4').getContext('2d');
+  new Chart(ctx4, {
+    type: 'line',
+    data: {
+      labels: ['2016 г.', '2017 г.', '2018 г.', '2019 г.', '2020 г.'],
+      datasets: [
+        {
+          label: 'Объем продаж (базис 2016)',
+          data: [100.0, 108.5, 123.3, 132.6, 137.0],
+          borderColor: '#1b533a',
+          backgroundColor: '#1b533a',
+          borderWidth: 3,
+          tension: 0,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        },
+        {
+          label: 'Прибыль (базис 2016)',
+          data: [100.0, 162.5, 145.8, 187.5, 120.8],
+          borderColor: '#b45309',
+          backgroundColor: '#b45309',
+          borderWidth: 2.5,
+          borderDash: [5, 4],
+          tension: 0,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 16 }
+      },
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          align: 'end',
+          labels: { boxWidth: 16, font: { weight: 600 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: (c) => `${c.dataset.label}: ${c.raw}% к уровню 2016 г.`
+          }
+        }
+      },
+      scales: {
+        y: {
+          min: 80,
+          max: 200,
+          grid: {
+            color: (c) => c.tick.value === 100 ? '#18221b' : '#e2e8e3'
+          },
+          ticks: {
+            callback: (v) => v + '%',
+            padding: 8
+          },
+          title: { display: true, text: 'Индекс к уровню 2016 года (%)', font: { weight: 600 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#18221b', font: { weight: 600 }, padding: 8 }
+        }
+      }
+    }
+  });
+
+  // ==========================================
+  // ЗАДАНИЕ 5: Bar chart с фокусом на топ-2 (51%)
+  // ==========================================
+  const ctx5 = document.getElementById('chart5').getContext('2d');
+  const marketShares = [
+    { name: 'РусСтанкоСтрой', share: 28, top: true },
+    { name: 'ТехСтанкоМаш', share: 23, top: true },
+    { name: 'Компания Г', share: 14 },
+    { name: 'Компания В', share: 7 },
+    { name: 'Компания А', share: 6 },
+    { name: 'Компания Е', share: 6 },
+    { name: 'Компания Б', share: 5 },
+    { name: 'Компания Д', share: 4 },
+    { name: 'Компания Ж', share: 4 },
+    { name: 'Компания И', share: 2 },
+    { name: 'Компания К', share: 1 }
+  ];
+
+  new Chart(ctx5, {
+    type: 'bar',
+    data: {
+      labels: marketShares.map(m => m.name),
+      datasets: [{
+        data: marketShares.map(m => m.share),
+        backgroundColor: marketShares.map(m => {
+          if (m.name === 'РусСтанкоСтрой') return '#1b533a';
+          if (m.name === 'ТехСтанкоМаш') return '#3f8865';
+          return '#cbd5e1';
+        }),
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 16 }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (c) => `Доля рынка: ${c.raw}%`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#e2e8e3' },
+          ticks: { callback: (v) => v + '%' },
+          title: { display: true, text: 'Доля в отраслевых продажах, %', font: { weight: 600 } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            padding: 12,
+            font: (c) => ({ weight: marketShares[c.index]?.top ? 'bold' : '600' }),
+            color: (c) => marketShares[c.index]?.top ? '#18221b' : '#57655d'
+          }
+        }
+      }
+    }
+  });
+
+  // ==========================================
+  // ЗАДАНИЕ 6: Рыночные доли и структура ТехСтанкоМаш
+  // ==========================================
+  const ctx6M = document.getElementById('chart6Market').getContext('2d');
+  new Chart(ctx6M, {
+    type: 'bar',
+    data: {
+      labels: ['Компания Г', 'ТехСтанкоМаш', 'Компания Б', 'Компания В', 'Компания А', 'Компания Д'],
+      datasets: [{
+        data: [31.8, 19.3, 16.6, 12.4, 10.1, 9.8],
+        backgroundColor: [
+          '#cbd5e1',
+          '#1b533a', // Фокус
+          '#cbd5e1',
+          '#cbd5e1',
+          '#cbd5e1',
+          '#cbd5e1'
+        ],
+        barThickness: 18
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: { left: 8, right: 16 }
+      },
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: '1. Доли игроков в отрасли (%)',
+          align: 'start',
+          color: '#18221b',
+          font: { size: 12, weight: 'bold' }
+        },
+        tooltip: {
+          callbacks: { label: (c) => `Доля: ${c.raw}%` }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#e2e8e3' },
+          ticks: { callback: (v) => v + '%' }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            padding: 10,
+            font: (c) => ({ weight: c.index === 1 ? 'bold' : '600' }),
+            color: (c) => c.index === 1 ? '#1b533a' : '#57655d'
+          }
+        }
+      }
+    }
+  });
+
+  const ctx6P = document.getElementById('chart6Product').getContext('2d');
+  new Chart(ctx6P, {
+    type: 'doughnut',
+    data: {
+      labels: ['Фрезерные (30 млн)', 'Токарные (15 млн)', 'Роботы (10 млн)', 'Сверлильные (5 млн)'],
+      datasets: [{
+        data: [30, 15, 10, 5],
+        backgroundColor: ['#1b533a', '#2d8a5b', '#52a27e', '#8ecaa8'],
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 12, font: { size: 11, weight: '600' }, padding: 10 }
+        },
+        title: {
+          display: true,
+          text: '2. Структура выручки (60 млн руб.)',
+          align: 'start',
+          color: '#18221b',
+          font: { size: 12, weight: 'bold' }
+        },
+        tooltip: {
+          callbacks: {
+            label: (c) => `${c.label}: ${((c.raw / 60) * 100).toFixed(1)}% выручки`
+          }
+        }
+      },
+      cutout: '55%'
+    }
+  });
+</script>
+
+</body>
+</html>
