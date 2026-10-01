@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ИиВД • Инфографика и визуализация данных | Замостьянов Н. В.</title>
+  <meta name="description" content="Лабораторные работы по курсу «Инфографика и визуализация данных». Студент: Замостьянов Николай Владиславович, группа ИДМ-26-08.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Dark Theme */
+      --bg-body: #0b0f17;
+      --bg-surface: #121824;
+      --bg-surface-elevated: #1a2234;
+      --bg-card: rgba(22, 30, 46, 0.75);
+      --bg-card-hover: rgba(28, 39, 60, 0.95);
+      --border-color: #26334a;
+      --border-hover: #3b82f6;
+      --border-accent: rgba(16, 185, 129, 0.4);
+
+      --text-main: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-highlight: #38bdf8;
+
+      --accent-emerald: #10b981;
+      --accent-emerald-soft: rgba(16, 185, 129, 0.15);
+      --accent-blue: #3b82f6;
+      --accent-blue-soft: rgba(59, 130, 246, 0.15);
+
+      --status-done-bg: rgba(16, 185, 129, 0.18);
+      --status-done-text: #34d399;
+      --status-done-border: rgba(16, 185, 129, 0.35);
+
+      --status-progress-bg: rgba(245, 158, 11, 0.18);
+      --status-progress-text: #fbbf24;
+      --status-progress-border: rgba(245, 158, 11, 0.35);
+
+      --status-planned-bg: rgba(100, 116, 139, 0.18);
+      --status-planned-text: #94a3b8;
+      --status-planned-border: rgba(100, 116, 139, 0.35);
+
+      --code-bg: #090d14;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.6);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-hover: #ffffff;
+      --border-color: #e2e8f0;
+      --border-hover: #2563eb;
+      --border-accent: rgba(16, 185, 129, 0.5);
+
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-highlight: #0284c7;
+
+      --accent-emerald: #059669;
+      --accent-emerald-soft: rgba(5, 150, 105, 0.12);
+      --accent-blue: #2563eb;
+      --accent-blue-soft: rgba(37, 99, 235, 0.12);
+
+      --status-done-bg: rgba(5, 150, 105, 0.12);
+      --status-done-text: #065f46;
+      --status-done-border: rgba(5, 150, 105, 0.3);
+
+      --status-progress-bg: rgba(217, 119, 6, 0.12);
+      --status-progress-text: #92400e;
+      --status-progress-border: rgba(217, 119, 6, 0.3);
+
+      --status-planned-bg: rgba(100, 116, 139, 0.12);
+      --status-planned-text: #475569;
+      --status-planned-border: rgba(100, 116, 139, 0.25);
+
+      --code-bg: #f1f5f9;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(at 15% 10%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--text-main);
+      border-color: var(--border-hover);
+      background: var(--bg-surface-elevated);
+      transform: translateX(-2px);
+    }
+
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-hover);
+    }
+
+    /* Subject Header Card */
+    .subject-header-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subject-header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-emerald), var(--accent-blue));
+    }
+
+    .subject-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .folder-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-highlight);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-code {
+      background: var(--accent-emerald-soft);
+      color: var(--accent-emerald);
+      border: 1px solid var(--border-accent);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .subject-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .subject-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .student-compact-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .student-compact-info strong {
+      color: var(--text-main);
+    }
+
+    /* Section Title */
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
+
+    .labs-count-tag {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    /* Labs List */
+    .labs-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .lab-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 26px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .lab-card:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--accent-emerald);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .lab-main-col {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .lab-badge-num {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .lab-texts {
+      min-width: 0;
+    }
+
+    .lab-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .lab-name {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .lab-subtitle {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .lab-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .tag-item {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .lab-actions-col {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-badge.done {
+      background: var(--status-done-bg);
+      color: var(--status-done-text);
+      border: 1px solid var(--status-done-border);
+    }
+
+    .status-badge.in-progress {
+      background: var(--status-progress-bg);
+      color: var(--status-progress-text);
+      border: 1px solid var(--status-progress-border);
+    }
+
+    .status-badge.planned {
+      background: var(--status-planned-bg);
+      color: var(--status-planned-text);
+      border: 1px solid var(--status-planned-border);
+    }
+
+    .btn-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--accent-emerald-soft);
+      color: var(--accent-emerald);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .lab-card:hover .btn-view {
+      background: var(--accent-emerald);
+      color: #ffffff;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 24px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-content a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-content a:hover {
+      color: var(--accent-emerald);
+    }
+
+    @media (max-width: 768px) {
+      .subject-header-card {
+        padding: 24px;
+      }
+      .lab-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .lab-actions-col {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 12px;
+        margin-top: 6px;
+        border-top: 1px dashed var(--border-color);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Верхняя строка навигации -->
+  <header class="top-bar">
+    <a href="../index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      Все дисциплины
+    </a>
+
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Переключить тему">
+      <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <span id="themeLabel">Тема</span>
+    </button>
+  </header>
+
+  <!-- Карточка дисциплины -->
+  <section class="subject-header-card">
+    <div class="subject-top-meta">
+      <span class="folder-tag">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        /IiVD/
+      </span>
+      <span class="badge-code">ИиВД</span>
+      <span style="font-size: 13px; color: var(--text-muted);">МГТУ «СТАНКИН» • Магистратура 1 семестр</span>
+    </div>
+
+    <h1 class="subject-title">Инфографика и визуализация данных</h1>
+    <p class="subject-desc">
+      Изучение принципов построения информативной графики, выбор корректных типов диаграмм, визуализация бизнес-показателей и разработка дашбордов без бэкенда.
+    </p>
+
+    <div class="student-compact-info">
+      <div>Студент: <strong>Замостьянов Николай Владиславович</strong></div>
+      <div>•</div>
+      <div>Группа: <strong>ИДМ-26-08</strong></div>
+    </div>
+  </section>
+
+  <!-- Список лабораторных работ по предмету -->
+  <main>
+    <div class="section-title-bar">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Список лабораторных работ
+      </h2>
+      <span class="labs-count-tag" id="labsCountTag">Работ: 1</span>
+    </div>
+
+    <div class="labs-grid" id="labsContainer">
+      <!-- Генерируется из массива LABS -->
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer>
+    <div class="container footer-content" style="padding: 0;">
+      <div>
+        <strong>Замостьянов Николай Владиславович</strong> • ИДМ-26-08 • МГТУ «СТАНКИН»
+      </div>
+      <div>
+        <a href="../index.html">← На главную</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  /**
+   * =======================================================================
+   * ИНСТРУКЦИЯ ДЛЯ AI-АГЕНТА И РАЗРАБОТЧИКА:
+   * Чтобы добавить новую лабораторную работу в эту дисциплину:
+   * 1. Создайте в этой папке подпапку (например, `LR2/`) с файлом `index.html`.
+   * 2. Добавьте запись о работе в массив LABS ниже:
+   *    {
+   *      num: 2,
+   *      title: "Лабораторная работа №2",
+   *      subtitle: "Тема и описание лабораторной работы",
+   *      path: "LR2/index.html",
+   *      status: "done", // "done", "in-progress" или "planned"
+   *      tags: ["Chart.js", "Тема"]
+   *    }
+   * 3. В корневом index.html увеличьте labsCount у этого предмета.
+   * =======================================================================
+   */
+  const LABS = [
+    {
+      num: 1,
+      title: "Лабораторная работа №1",
+      subtitle: "Информационная графика: Выполнение целевых показателей филиалов компании (Вариант 1)",
+      path: "LR1/index.html",
+      status: "done",
+      tags: ["Chart.js", "Инфографика", "Вариант 1"]
+    }
+  ];
+
+  function getStatusInfo(status) {
+    switch (status) {
+      case "done":
+        return { label: "Выполнено", className: "done" };
+      case "in-progress":
+        return { label: "В работе", className: "in-progress" };
+      default:
+        return { label: "Запланировано", className: "planned" };
+    }
+  }
+
+  function renderLabs() {
+    const container = document.getElementById("labsContainer");
+    const countTag = document.getElementById("labsCountTag");
+    container.innerHTML = "";
+
+    countTag.textContent = `Работ: ${LABS.length}`;
+
+    LABS.forEach(lab => {
+      const status = getStatusInfo(lab.status);
+      const card = document.createElement("a");
+      card.href = lab.path;
+      card.className = "lab-card";
+      card.title = `Открыть ${lab.title}`;
+
+      const tagsHtml = (lab.tags || []).map(t => `<span class="tag-item">${t}</span>`).join("");
+
+      card.innerHTML = `
+        <div class="lab-main-col">
+          <div class="lab-badge-num">№${lab.num}</div>
+          <div class="lab-texts">
+            <div class="lab-title-row">
+              <h3 class="lab-name">${lab.title}</h3>
+            </div>
+            <p class="lab-subtitle">${lab.subtitle}</p>
+            <div class="lab-tags">
+              ${tagsHtml}
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-actions-col">
+          <span class="status-badge ${status.className}">${status.label}</span>
+          <span class="btn-view">
+            Открыть отчет
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  // Синхронизация темы оформления
+  const themeToggle = document.getElementById("themeToggle");
+  const themeLabel = document.getElementById("themeLabel");
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("labs_theme", theme);
+    themeLabel.textContent = theme === "dark" ? "Темная" : "Светлая";
+  }
+
+  const savedTheme = localStorage.getItem("labs_theme") || 
+    (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  setTheme(savedTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+  });
+
+  renderLabs();
+</script>
+
+</body>
+</html>
