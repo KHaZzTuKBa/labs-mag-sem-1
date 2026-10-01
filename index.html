@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторные работы | Замостьянов Николай (ИДМ-26-08)</title>
+  <meta name="description" content="Портал лабораторных работ магистратуры МГТУ «СТАНКИН». Студент: Замостьянов Николай Владиславович, группа ИДМ-26-08.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Dark Theme */
+      --bg-body: #0b0f17;
+      --bg-surface: #121824;
+      --bg-surface-elevated: #1a2234;
+      --bg-card: rgba(22, 30, 46, 0.75);
+      --bg-card-hover: rgba(28, 39, 60, 0.95);
+      --border-color: #26334a;
+      --border-hover: #3b82f6;
+      --border-accent: rgba(16, 185, 129, 0.4);
+
+      --text-main: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-highlight: #38bdf8;
+
+      --accent-emerald: #10b981;
+      --accent-emerald-soft: rgba(16, 185, 129, 0.15);
+      --accent-blue: #3b82f6;
+      --accent-blue-soft: rgba(59, 130, 246, 0.15);
+      --accent-purple: #a855f7;
+      --accent-purple-soft: rgba(168, 85, 247, 0.15);
+
+      --code-bg: #090d14;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.6);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-hover: #ffffff;
+      --border-color: #e2e8f0;
+      --border-hover: #2563eb;
+      --border-accent: rgba(16, 185, 129, 0.5);
+
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-highlight: #0284c7;
+
+      --accent-emerald: #059669;
+      --accent-emerald-soft: rgba(5, 150, 105, 0.12);
+      --accent-blue: #2563eb;
+      --accent-blue-soft: rgba(37, 99, 235, 0.12);
+      --accent-purple: #9333ea;
+      --accent-purple-soft: rgba(147, 51, 234, 0.12);
+
+      --code-bg: #f1f5f9;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(at 15% 10%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(59, 130, 246, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: -0.01em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-emerald), var(--accent-blue));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.35);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle, .btn-link {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .theme-toggle:hover, .btn-link:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-hover);
+    }
+
+    /* Hero / Student Card */
+    .hero-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 34px 38px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-emerald), var(--accent-blue), var(--accent-purple));
+    }
+
+    .hero-layout {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+    }
+
+    .hero-profile {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+
+    .avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(59, 130, 246, 0.25));
+      border: 2px solid var(--border-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--accent-emerald);
+      flex-shrink: 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-info h1 {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .profile-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-primary {
+      background: var(--accent-emerald-soft);
+      color: var(--accent-emerald);
+      border: 1px solid var(--border-accent);
+    }
+
+    .badge-secondary {
+      background: var(--accent-blue-soft);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-dark {
+      background: var(--bg-surface-elevated);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 20px;
+      background: var(--bg-surface-elevated);
+      padding: 14px 22px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .stat-item {
+      text-align: center;
+      min-width: 90px;
+    }
+
+    .stat-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* Controls Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 440px;
+      min-width: 260px;
+    }
+
+    .search-box input {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 11px 16px 11px 42px;
+      color: var(--text-main);
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 0 3px var(--accent-blue-soft);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Section Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .section-counter {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12px;
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    /* Subjects Grid */
+    .subjects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 22px;
+      margin-bottom: 40px;
+    }
+
+    .subject-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .subject-card:hover {
+      border-color: var(--accent-emerald);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-3px);
+      background: var(--bg-card-hover);
+    }
+
+    .card-top {
+      margin-bottom: 20px;
+    }
+
+    .subject-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .folder-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-highlight);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subject-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background: var(--accent-emerald-soft);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-emerald);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .subject-title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+
+    .subject-desc {
+      font-size: 13.5px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+      margin-top: 12px;
+    }
+
+    .labs-count-badge {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-enter {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-emerald);
+      transition: transform 0.2s ease;
+    }
+
+    .subject-card:hover .btn-enter {
+      transform: translateX(4px);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      display: none;
+    }
+
+    .empty-state h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 24px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-emerald);
+    }
+
+    @media (max-width: 768px) {
+      .hero-card {
+        padding: 24px;
+      }
+      .hero-stats {
+        width: 100%;
+        justify-content: space-around;
+      }
+      .subjects-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Навигационная панель -->
+  <header class="top-bar">
+    <a href="index.html" class="brand-tag">
+      <div class="brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m18 16 4-4-4-4"/>
+          <path d="m6 8-4 4 4 4"/>
+          <path d="m14.5 4-5 16"/>
+        </svg>
+      </div>
+      <span>Лабораторные работы • Магистратура</span>
+    </a>
+
+    <div class="nav-actions">
+      <a href="https://github.com/KHaZzTuKBa/labs-mag-sem-1" target="_blank" rel="noopener noreferrer" class="btn-link" title="Открыть репозиторий на GitHub">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        GitHub
+      </a>
+
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Переключить тему оформления">
+        <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/>
+          <line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/>
+          <line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <span id="themeLabel">Тема</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Карточка студента -->
+  <section class="hero-card">
+    <div class="hero-layout">
+      <div class="hero-profile">
+        <div class="avatar" title="Замостьянов Николай">ЗН</div>
+        <div class="profile-info">
+          <h1>Замостьянов Николай Владиславович</h1>
+          <div class="profile-badges">
+            <span class="badge badge-primary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+              </svg>
+              Группа: <strong>ИДМ-26-08</strong>
+            </span>
+            <span class="badge badge-secondary">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+              </svg>
+              МГТУ «СТАНКИН»
+            </span>
+            <span class="badge badge-dark">
+              1-й семестр • Осень 2026
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value" id="statSubjects">1</div>
+          <div class="stat-label">Предметов</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" style="color: var(--accent-emerald);" id="statTotalLabs">1</div>
+          <div class="stat-label">Всего лаб</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Панель поиска -->
+  <section class="controls-bar">
+    <div class="search-box">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Поиск по предмету или папке..." autocomplete="off">
+    </div>
+  </section>
+
+  <!-- Список предметов -->
+  <main>
+    <div class="section-header">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        Список дисциплин
+      </h2>
+      <span class="section-counter" id="cardsCounter">Предметов: 1</span>
+    </div>
+
+    <div class="subjects-grid" id="subjectsContainer">
+      <!-- Генерируется динамически через JS -->
+    </div>
+
+    <div class="empty-state" id="emptyState">
+      <h4>Предмет не найден</h4>
+      <p>Попробуйте изменить поисковый запрос.</p>
+    </div>
+  </main>
+
+  <!-- Подвал сайта -->
+  <footer>
+    <div class="container footer-content" style="padding: 0;">
+      <div>
+        <strong>Замостьянов Николай Владиславович</strong> • ИДМ-26-08 • МГТУ «СТАНКИН»
+      </div>
+      <div class="footer-links">
+        <a href="https://github.com/KHaZzTuKBa/labs-mag-sem-1" target="_blank" rel="noopener noreferrer">GitHub Репозиторий</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  /**
+   * =======================================================================
+   * ИНСТРУКЦИЯ ДЛЯ AI-АГЕНТА И РАЗРАБОТЧИКА:
+   * Чтобы добавить новую дисциплину (предмет):
+   * 1. Создайте в корне репозитория папку с кодом предмета (например, `BD/` или `WEB/`).
+   * 2. Скопируйте шаблон `index.html` из папки `IiVD/` в новую папку предмета и настройте список лаб.
+   * 3. Добавьте запись о предмете в массив SUBJECTS_DATA ниже.
+   * =======================================================================
+   */
+  const SUBJECTS_DATA = [
+    {
+      id: "IiVD",
+      folder: "IiVD",
+      name: "Инфографика и визуализация данных",
+      code: "ИиВД",
+      description: "Анализ данных, построение сравнительных графиков и интерактивных визуализаций.",
+      icon: "chart",
+      link: "IiVD/index.html",
+      labsCount: 1
+    }
+    /*
+    Пример для добавления следующего предмета:
+    ,
+    {
+      id: "BD",
+      folder: "BD",
+      name: "Базы данных",
+      code: "БД",
+      description: "Проектирование реляционных баз данных и оптимизация запросов.",
+      icon: "database",
+      link: "BD/index.html",
+      labsCount: 0
+    }
+    */
+  ];
+
+  // Иконка предмета
+  function getSubjectIcon(type) {
+    if (type === "chart") {
+      return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/>
+        <line x1="12" y1="20" x2="12" y2="4"/>
+        <line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>`;
+    }
+    return `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+    </svg>`;
+  }
+
+  // Склонение существительных
+  function getNoun(number, one, two, five) {
+    let n = Math.abs(number);
+    n %= 100;
+    if (n >= 5 && n <= 20) return five;
+    n %= 10;
+    if (n === 1) return one;
+    if (n >= 2 && n <= 4) return two;
+    return five;
+  }
+
+  // Обновление счетчиков
+  function updateStats() {
+    const totalSubjects = SUBJECTS_DATA.length;
+    let totalLabs = 0;
+    SUBJECTS_DATA.forEach(sub => totalLabs += (sub.labsCount || 0));
+
+    document.getElementById("statSubjects").textContent = totalSubjects;
+    document.getElementById("statTotalLabs").textContent = totalLabs;
+  }
+
+  // Отрисовка карточек предметов
+  function renderSubjects(query = "") {
+    const container = document.getElementById("subjectsContainer");
+    const emptyState = document.getElementById("emptyState");
+    const counter = document.getElementById("cardsCounter");
+    const normalizedQuery = query.trim().toLowerCase();
+
+    container.innerHTML = "";
+
+    const filtered = SUBJECTS_DATA.filter(sub => {
+      if (!normalizedQuery) return true;
+      return sub.name.toLowerCase().includes(normalizedQuery) ||
+             sub.folder.toLowerCase().includes(normalizedQuery) ||
+             (sub.code && sub.code.toLowerCase().includes(normalizedQuery)) ||
+             sub.description.toLowerCase().includes(normalizedQuery);
+    });
+
+    counter.textContent = `Предметов: ${filtered.length}`;
+
+    if (filtered.length === 0) {
+      emptyState.style.display = "block";
+      return;
+    } else {
+      emptyState.style.display = "none";
+    }
+
+    filtered.forEach(sub => {
+      const card = document.createElement("a");
+      card.href = sub.link;
+      card.className = "subject-card";
+      card.title = `Открыть предмет «${sub.name}»`;
+
+      const labsWord = getNoun(sub.labsCount, 'работа', 'работы', 'работ');
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="subject-meta">
+            <span class="folder-tag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+              </svg>
+              /${sub.folder}/
+            </span>
+            <span class="badge badge-dark">${sub.code || ''}</span>
+          </div>
+
+          <div class="subject-icon-box">
+            ${getSubjectIcon(sub.icon)}
+          </div>
+
+          <h3 class="subject-title">${sub.name}</h3>
+          <p class="subject-desc">${sub.description}</p>
+        </div>
+
+        <div class="card-footer">
+          <span class="labs-count-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            ${sub.labsCount} ${labsWord}
+          </span>
+          <span class="btn-enter">
+            К работам
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"/>
+              <path d="m12 5 7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  // Управление темой
+  const themeToggle = document.getElementById("themeToggle");
+  const themeLabel = document.getElementById("themeLabel");
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("labs_theme", theme);
+    themeLabel.textContent = theme === "dark" ? "Темная" : "Светлая";
+  }
+
+  const savedTheme = localStorage.getItem("labs_theme") || 
+    (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  setTheme(savedTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+  });
+
+  // Поиск
+  const searchInput = document.getElementById("searchInput");
+  searchInput.addEventListener("input", (e) => {
+    renderSubjects(e.target.value);
+  });
+
+  // Инициализация
+  updateStats();
+  renderSubjects();
+</script>
+
+</body>
+</html>
