@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>МиКМ • Математическое и компьютерное моделирование | Замостьянов Н. В.</title>
+  <meta name="description" content="Отчеты и материалы по курсу «Математическое и компьютерное моделирование». Студент: Замостьянов Николай Владиславович, группа ИДМ-26-08.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      /* Dark Theme */
+      --bg-body: #0b0f17;
+      --bg-surface: #121824;
+      --bg-surface-elevated: #1a2234;
+      --bg-card: rgba(22, 30, 46, 0.75);
+      --bg-card-hover: rgba(28, 39, 60, 0.95);
+      --border-color: #26334a;
+      --border-hover: #3b82f6;
+      --border-accent: rgba(56, 189, 248, 0.4);
+
+      --text-main: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-highlight: #38bdf8;
+
+      --accent-primary: #38bdf8;
+      --accent-primary-soft: rgba(56, 189, 248, 0.15);
+      --accent-emerald: #10b981;
+      --accent-emerald-soft: rgba(16, 185, 129, 0.15);
+      --accent-purple: #a855f7;
+      --accent-purple-soft: rgba(168, 85, 247, 0.15);
+      --accent-pdf: #ef4444;
+      --accent-pdf-soft: rgba(239, 68, 68, 0.15);
+
+      --status-done-bg: rgba(16, 185, 129, 0.18);
+      --status-done-text: #34d399;
+      --status-done-border: rgba(16, 185, 129, 0.35);
+
+      --code-bg: #090d14;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 20px 30px -10px rgba(0, 0, 0, 0.6);
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-full: 9999px;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-elevated: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.95);
+      --bg-card-hover: #ffffff;
+      --border-color: #e2e8f0;
+      --border-hover: #0284c7;
+      --border-accent: rgba(2, 132, 199, 0.4);
+
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --text-highlight: #0284c7;
+
+      --accent-primary: #0284c7;
+      --accent-primary-soft: rgba(2, 132, 199, 0.12);
+      --accent-emerald: #059669;
+      --accent-emerald-soft: rgba(5, 150, 105, 0.12);
+      --accent-purple: #9333ea;
+      --accent-purple-soft: rgba(147, 51, 234, 0.12);
+      --accent-pdf: #dc2626;
+      --accent-pdf-soft: rgba(220, 38, 38, 0.12);
+
+      --status-done-bg: rgba(5, 150, 105, 0.12);
+      --status-done-text: #065f46;
+      --status-done-border: rgba(5, 150, 105, 0.3);
+
+      --code-bg: #f1f5f9;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 10px 20px -5px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(at 15% 10%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 85% 20%, rgba(168, 85, 247, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 32px 24px;
+      width: 100%;
+    }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      color: var(--text-main);
+      border-color: var(--border-hover);
+      background: var(--bg-surface-elevated);
+      transform: translateX(-2px);
+    }
+
+    .theme-toggle {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      font-family: inherit;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-hover);
+    }
+
+    /* Subject Header Card */
+    .subject-header-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      margin-bottom: 32px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .subject-header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-primary), var(--accent-purple));
+    }
+
+    .subject-top-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .folder-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-highlight);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-code {
+      background: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      border: 1px solid var(--border-accent);
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .subject-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 10px;
+      line-height: 1.25;
+    }
+
+    .subject-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary);
+      max-width: 780px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .student-compact-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-color);
+      flex-wrap: wrap;
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+
+    .student-compact-info strong {
+      color: var(--text-main);
+    }
+
+    /* Section Title */
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-main);
+    }
+
+    .count-tag {
+      font-size: 12px;
+      color: var(--text-secondary);
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-color);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+    }
+
+    /* Works List */
+    .works-grid {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .work-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 26px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .work-card:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--accent-primary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .work-main-col {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .pdf-badge-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--accent-pdf-soft);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--accent-pdf);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-weight: 800;
+      font-size: 13px;
+      font-family: 'Fira Code', monospace;
+    }
+
+    .work-texts {
+      min-width: 0;
+    }
+
+    .work-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 4px;
+    }
+
+    .work-title {
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .work-filename {
+      font-family: 'Fira Code', monospace;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      word-break: break-all;
+    }
+
+    .work-meta-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      align-items: center;
+    }
+
+    .meta-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--code-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+    }
+
+    .work-actions-col {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+
+    .status-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background: var(--status-done-bg);
+      color: var(--status-done-text);
+      border: 1px solid var(--status-done-border);
+    }
+
+    .btn-view-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--accent-primary-soft);
+      color: var(--accent-primary);
+      border: 1px solid var(--border-accent);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .work-card:hover .btn-view-pdf {
+      background: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 24px 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-content a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-content a:hover {
+      color: var(--accent-primary);
+    }
+
+    @media (max-width: 768px) {
+      .subject-header-card {
+        padding: 24px;
+      }
+      .work-card {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .work-actions-col {
+        width: 100%;
+        justify-content: space-between;
+        padding-top: 12px;
+        margin-top: 6px;
+        border-top: 1px dashed var(--border-color);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Навигация -->
+  <header class="top-bar">
+    <a href="../index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      Все дисциплины
+    </a>
+
+    <button id="themeToggle" class="theme-toggle" type="button" aria-label="Переключить тему оформления">
+      <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/>
+        <line x1="12" y1="1" x2="12" y2="3"/>
+        <line x1="12" y1="21" x2="12" y2="23"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+        <line x1="1" y1="12" x2="3" y2="12"/>
+        <line x1="21" y1="12" x2="23" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <span id="themeLabel">Тема</span>
+    </button>
+  </header>
+
+  <!-- Карточка предмета -->
+  <section class="subject-header-card">
+    <div class="subject-top-meta">
+      <span class="folder-tag">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+        </svg>
+        /MiKM/
+      </span>
+      <span class="badge-code">МиКМ</span>
+      <span style="font-size: 13px; color: var(--text-muted);">МГТУ «СТАНКИН» • Магистратура 1 семестр</span>
+    </div>
+
+    <h1 class="subject-title">Математическое и компьютерное моделирование</h1>
+    <p class="subject-desc">
+      Семинарские занятия и практические отчеты по курсу математического и компьютерного моделирования систем.
+    </p>
+
+    <div class="student-compact-info">
+      <div>Студент: <strong>Замостьянов Николай Владиславович</strong></div>
+      <div>•</div>
+      <div>Группа: <strong>ИДМ-26-08</strong></div>
+      <div>•</div>
+      <div>Формат: <strong>PDF (открытие в новой вкладке)</strong></div>
+    </div>
+  </section>
+
+  <!-- Список работ (PDF) -->
+  <main>
+    <div class="section-title-bar">
+      <h2 class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        Семинарские работы и отчеты
+      </h2>
+      <span class="count-tag" id="worksCountTag">Работ: 3</span>
+    </div>
+
+    <div class="works-grid" id="worksContainer">
+      <!-- Генерируется из массива WORKS -->
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer>
+    <div class="container footer-content" style="padding: 0;">
+      <div>
+        <strong>Замостьянов Николай Владиславович</strong> • ИДМ-26-08 • МГТУ «СТАНКИН»
+      </div>
+      <div>
+        <a href="../index.html">← На главную</a>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+  /**
+   * =======================================================================
+   * ИНСТРУКЦИЯ ДЛЯ AI-АГЕНТА И РАЗРАБОТЧИКА:
+   * Чтобы добавить новый PDF-отчет или семинар в эту дисциплину:
+   * 1. Создайте в этой папке подпапку (например, `Sem4/`) и поместите туда PDF.
+   * 2. Добавьте запись о работе в массив WORKS ниже:
+   *    {
+   *      num: 4,
+   *      title: "Семинар №4",
+   *      subtitle: "Тема и описание семинара",
+   *      folder: "Sem4",
+   *      fileName: "Имя файла.pdf",
+   *      path: "Sem4/Имя файла.pdf",
+   *      status: "done"
+   *    }
+   * 3. В корневом index.html увеличьте labsCount у предмета MiKM.
+   * =======================================================================
+   */
+  const WORKS = [
+    {
+      num: 1,
+      title: "Семинар №1",
+      subtitle: "Отчет по семинарскому занятию №1",
+      folder: "Sem1",
+      fileName: "Замостьянов ИДМ-26-08 МиКМ Сем 1.pdf",
+      path: "Sem1/Замостьянов ИДМ-26-08 МиКМ Сем 1.pdf",
+      status: "done"
+    },
+    {
+      num: 2,
+      title: "Семинар №2",
+      subtitle: "Отчет по семинарскому занятию №2",
+      folder: "Sem2",
+      fileName: "Замостьянов ИДМ-26-08 МиКМ Сем 2.pdf",
+      path: "Sem2/Замостьянов ИДМ-26-08 МиКМ Сем 2.pdf",
+      status: "done"
+    },
+    {
+      num: 3,
+      title: "Семинар №3",
+      subtitle: "Отчет по семинарскому занятию №3",
+      folder: "Sem3",
+      fileName: "Замостьянов ИДМ-26-08 МиКМ Сем 3.pdf",
+      path: "Sem3/Замостьянов ИДМ-26-08 МиКМ Сем 3.pdf",
+      status: "done"
+    }
+  ];
+
+  function renderWorks() {
+    const container = document.getElementById("worksContainer");
+    const countTag = document.getElementById("worksCountTag");
+    container.innerHTML = "";
+
+    countTag.textContent = `Работ: ${WORKS.length}`;
+
+    WORKS.forEach(work => {
+      const card = document.createElement("a");
+      // Кодируем URL для безопасного открытия PDF с кириллицей и пробелами
+      card.href = encodeURI(work.path);
+      card.target = "_blank";
+      card.rel = "noopener noreferrer";
+      card.className = "work-card";
+      card.title = `Открыть ${work.title} (${work.fileName}) в новой вкладке`;
+
+      card.innerHTML = `
+        <div class="work-main-col">
+          <div class="pdf-badge-icon" title="Формат PDF">PDF</div>
+          <div class="work-texts">
+            <div class="work-title-row">
+              <h3 class="work-title">${work.title}</h3>
+            </div>
+            <div class="work-filename">📄 ${work.fileName}</div>
+            <div class="work-meta-tags">
+              <span class="meta-tag">📁 /${work.folder}/</span>
+              <span class="meta-tag">Формат: PDF</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="work-actions-col">
+          <span class="status-badge">Выполнено</span>
+          <span class="btn-view-pdf">
+            Открыть PDF
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" y1="14" x2="21" y2="3"/>
+            </svg>
+          </span>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
+  }
+
+  // Синхронизация темы оформления
+  const themeToggle = document.getElementById("themeToggle");
+  const themeLabel = document.getElementById("themeLabel");
+
+  function setTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("labs_theme", theme);
+    themeLabel.textContent = theme === "dark" ? "Темная" : "Светлая";
+  }
+
+  const savedTheme = localStorage.getItem("labs_theme") || 
+    (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  setTheme(savedTheme);
+
+  themeToggle.addEventListener("click", () => {
+    const current = document.documentElement.getAttribute("data-theme");
+    setTheme(current === "dark" ? "light" : "dark");
+  });
+
+  renderWorks();
+</script>
+
+</body>
+</html>
