@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>МиКМ • Математическое и компьютерное моделирование | Замостьянов Н. В.</title>
-  <meta name="description" content="Отчеты и материалы по курсу «Математическое и компьютерное моделирование». Студент: Замостьянов Николай Владиславович, группа ИДМ-26-08.">
+  <meta name="description" content="Лабораторные работы, отчеты и семинары по курсу «Математическое и компьютерное моделирование». Студент: Замостьянов Николай Владиславович, группа ИДМ-26-08.">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -409,10 +409,31 @@
       border: 1px solid var(--border-accent);
       border-radius: var(--radius-sm);
       transition: all 0.2s ease;
+      text-decoration: none;
     }
 
-    .work-card:hover .btn-view-pdf {
+    .btn-view-pdf:hover {
       background: var(--accent-primary);
+      color: #ffffff;
+    }
+
+    .btn-view-web {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      background: var(--accent-emerald-soft);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-view-web:hover {
+      background: var(--accent-emerald);
       color: #ffffff;
     }
 
@@ -506,7 +527,7 @@
 
     <h1 class="subject-title">Математическое и компьютерное моделирование</h1>
     <p class="subject-desc">
-      Семинарские занятия и практические отчеты по курсу математического и компьютерного моделирования систем.
+      Лабораторные работы, семинарские занятия и практические отчеты по курсу математического и компьютерного моделирования систем.
     </p>
 
     <div class="student-compact-info">
@@ -514,11 +535,11 @@
       <div>•</div>
       <div>Группа: <strong>ИДМ-26-08</strong></div>
       <div>•</div>
-      <div>Формат: <strong>PDF (открытие в новой вкладке)</strong></div>
+      <div>Формат: <strong>PDF и интерактивные отчеты</strong></div>
     </div>
   </section>
 
-  <!-- Список работ (PDF) -->
+  <!-- Список работ -->
   <main>
     <div class="section-title-bar">
       <h2 class="section-title">
@@ -529,9 +550,9 @@
           <line x1="16" y1="17" x2="8" y2="17"/>
           <polyline points="10 9 9 9 8 9"/>
         </svg>
-        Семинарские работы и отчеты
+        Лабораторные работы и семинарские отчеты
       </h2>
-      <span class="count-tag" id="worksCountTag">Работ: 4</span>
+      <span class="count-tag" id="worksCountTag">Работ: 5</span>
     </div>
 
     <div class="works-grid" id="worksContainer">
@@ -575,6 +596,18 @@
   const WORKS = [
     {
       num: 1,
+      type: "lab",
+      title: "Лабораторная работа №1",
+      subtitle: "Математическое и компьютерное моделирование на примере модели «Хищник-Жертва» (Лотки-Вольтерры)",
+      folder: "LR1",
+      fileName: "Замостьянов_ИДМ-26-08_МиКМ_ЛР1.pdf",
+      path: "LR1/Замостьянов_ИДМ-26-08_МиКМ_ЛР1.pdf",
+      pagePath: "LR1/index.html",
+      status: "done"
+    },
+    {
+      num: 1,
+      type: "sem",
       title: "Семинар №1",
       subtitle: "Отчет по семинарскому занятию №1",
       folder: "Sem1",
@@ -584,6 +617,7 @@
     },
     {
       num: 2,
+      type: "sem",
       title: "Семинар №2",
       subtitle: "Отчет по семинарскому занятию №2",
       folder: "Sem2",
@@ -593,6 +627,7 @@
     },
     {
       num: 3,
+      type: "sem",
       title: "Семинар №3",
       subtitle: "Отчет по семинарскому занятию №3",
       folder: "Sem3",
@@ -602,6 +637,7 @@
     },
     {
       num: 4,
+      type: "sem",
       title: "Семинар №4",
       subtitle: "Отчет по семинарскому занятию №4",
       folder: "Sem4",
@@ -619,13 +655,29 @@
     countTag.textContent = `Работ: ${WORKS.length}`;
 
     WORKS.forEach(work => {
-      const card = document.createElement("a");
-      // Кодируем URL для безопасного открытия PDF с кириллицей и пробелами
-      card.href = encodeURI(work.path);
-      card.target = "_blank";
-      card.rel = "noopener noreferrer";
+      const card = document.createElement("div");
       card.className = "work-card";
-      card.title = `Открыть ${work.title} (${work.fileName}) в новой вкладке`;
+      card.title = `Открыть ${work.title} (${work.fileName})`;
+
+      // Клик по карточке открывает основной PDF (если кликнули мимо кнопок)
+      card.addEventListener("click", (e) => {
+        if (e.target.closest("a, button")) return;
+        window.open(encodeURI(work.path), "_blank");
+      });
+
+      const typeBadge = work.type === "lab"
+        ? `<span style="font-size: 11px; padding: 2px 8px; border-radius: 4px; background: var(--accent-emerald-soft); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.35); font-weight: 700;">Лабораторная</span>`
+        : `<span class="meta-tag" style="font-size: 11px; font-weight: 600;">Семинар</span>`;
+
+      const webActionBtn = work.pagePath
+        ? `<a href="${work.pagePath}" class="btn-view-web" title="Открыть интерактивную веб-страницу">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+            </svg>
+            Интерактивный отчет
+          </a>`
+        : ``;
 
       card.innerHTML = `
         <div class="work-main-col">
@@ -633,7 +685,9 @@
           <div class="work-texts">
             <div class="work-title-row">
               <h3 class="work-title">${work.title}</h3>
+              ${typeBadge}
             </div>
+            <div style="font-size: 13.5px; color: var(--text-secondary); margin: 3px 0 6px;">${work.subtitle}</div>
             <div class="work-filename">📄 ${work.fileName}</div>
             <div class="work-meta-tags">
               <span class="meta-tag">📁 /${work.folder}/</span>
@@ -644,14 +698,15 @@
 
         <div class="work-actions-col">
           <span class="status-badge">Выполнено</span>
-          <span class="btn-view-pdf">
+          ${webActionBtn}
+          <a href="${encodeURI(work.path)}" target="_blank" rel="noopener noreferrer" class="btn-view-pdf" title="Открыть оригинальный PDF в новой вкладке">
             Открыть PDF
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
               <polyline points="15 3 21 3 21 9"/>
               <line x1="10" y1="14" x2="21" y2="3"/>
             </svg>
-          </span>
+          </a>
         </div>
       `;
 
