@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кто доучивается — отчисления студентов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="sr-only" href="#main">К содержанию</a>
+  <div class="page">
+    <header class="masthead">
+      <span>Лабораторная работа № 3 · инфографика</span>
+      <a href="https://doi.org/10.24432/C5MC89">UCI ML Repository, 2021</a>
+    </header>
+
+    <main id="main">
+      <section class="title-block">
+        <p class="running">Политехнический институт Порталегри · Португалия</p>
+        <h1>Кто доучивается</h1>
+        <p class="lede">Как первый семестр перетекает во второй и в итог, в каких программах выше отчисление и чем возраст и оценки отличаются у выпускников, тех, кто ещё учится, и отчисленных.</p>
+        <nav class="title-nav" aria-label="Разделы">
+          <a href="#semesters">Семестры</a>
+          <a href="#programs">Программы</a>
+          <a href="#spread">Разброс</a>
+        </nav>
+        <span class="ornament" aria-hidden="true"></span>
+      </section>
+
+      <ul class="kpis" aria-label="Сводка по выборке">
+        <li>
+          <b id="hero-n">—</b>
+          <span>в выборке</span>
+        </li>
+        <li class="is-grad">
+          <b id="kpi-g">—</b>
+          <span>выпустились</span>
+        </li>
+        <li class="is-enr">
+          <b id="kpi-e">—</b>
+          <span>ещё учатся</span>
+        </li>
+        <li class="is-drop">
+          <b id="kpi-d">—</b>
+          <span>отчислены</span>
+        </li>
+      </ul>
+
+      <p class="boot-error" id="boot-error" hidden></p>
+
+      <form id="filters" autocomplete="off">
+        <fieldset class="filter-shell">
+        <legend>Выборка наблюдений</legend>
+        <div class="filters">
+          <label class="filter-field">Пол
+            <select id="filter-gender" name="gender">
+              <option value="all">Все</option>
+              <option value="0">Женщины</option>
+              <option value="1">Мужчины</option>
+            </select>
+          </label>
+          <label class="filter-field">Стипендия
+            <select id="filter-sch" name="scholarship">
+              <option value="all">Все</option>
+              <option value="1">Есть</option>
+              <option value="0">Нет</option>
+            </select>
+          </label>
+          <label class="filter-field">Форма
+            <select id="filter-att" name="attendance">
+              <option value="all">День и вечер</option>
+              <option value="1">Дневная</option>
+              <option value="0">Вечерняя</option>
+            </select>
+          </label>
+          <button type="button" class="quiet-button" id="filter-reset">Сбросить</button>
+          <button type="button" class="download" id="download-csv">Скачать таблицу</button>
+          <p class="filter-count">
+            <strong id="filter-n">—</strong>
+            <span id="filter-sub">из исходных данных</span>
+          </p>
+        </div>
+        </fieldset>
+      </form>
+
+      <section class="figure" id="semesters">
+        <p class="fig-label">Рис. 1. Потоки между семестрами</p>
+        <h2>Как первый семестр переходит во второй и в итог?</h2>
+        <p class="chapter-intro" id="sankey-insight">Толщина ленты — число студентов. Три столбца: сданные предметы в 1 семестре, во 2 семестре и итоговый статус к концу нормального срока программы.</p>
+        <div class="chapter-grid">
+          <div class="aside">
+            <div class="readout" id="sankey-readout">
+              <div class="label">Выбранный поток</div>
+              <p class="hour" id="sankey-title">Все студенты в фильтре</p>
+              <div class="big" id="sankey-big">—</div>
+              <p class="unit" id="sankey-unit">студентов на графике</p>
+              <p class="breakdown" id="sankey-break">Наведите на ленту или узел, чтобы увидеть численность и долю.</p>
+            </div>
+            <p class="tiny-note">«Нет оценок» — студенты курса анимации и мультимедиа, у которых в таблице нет записанных предметов. В исходных данных таких 180 человек. Это не то же самое, что «сдал 0 предметов».</p>
+          </div>
+          <div class="surface">
+            <svg class="chart" id="sankey-svg" viewBox="0 0 640 500" role="img" aria-labelledby="sankey-title sankey-break"></svg>
+            <p class="graph-footnote">Слева направо: 1 семестр → 2 семестр → итог. Цвет ленты ко второму столбцу нейтральный; к статусу — цвет итога.</p>
+          </div>
+        </div>
+        <details class="data-reveal">
+          <summary>Таблица потоков</summary>
+          <div class="table-wrap">
+            <table id="sankey-table">
+              <thead>
+                <tr>
+                  <th>1 семестр</th>
+                  <th>2 семестр</th>
+                  <th>Итог</th>
+                  <th>Студентов</th>
+                  <th>Доля</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="figure" id="programs">
+        <p class="fig-label">Рис. 2. Состав по направлениям</p>
+        <h2>Какие направления дают выпускников, а какие — отчисления?</h2>
+        <p class="chapter-intro" id="sun-insight">Внутреннее кольцо — укрупнённая группа программ, внешнее — итоговый статус. Площадь сектора — число студентов в текущем фильтре.</p>
+        <div class="chapter-grid">
+          <div class="aside">
+            <div class="breadcrumb" id="sun-crumb"></div>
+            <div class="readout" id="sun-readout">
+              <div class="label">Выбранный сектор</div>
+              <p class="hour" id="sun-title">Все группы</p>
+              <div class="big" id="sun-big">—</div>
+              <p class="unit" id="sun-unit">студентов</p>
+              <p class="breakdown" id="sun-break">Наведите на сектор или нажмите внутреннее кольцо, чтобы раскрыть одну группу.</p>
+            </div>
+            <ul class="legend-list" id="sun-legend"></ul>
+            <p class="tiny-note">Семнадцать кодов курсов свернуты в шесть групп, иначе кольцо не читается. Состав групп — в примечаниях внизу страницы.</p>
+          </div>
+          <div class="surface">
+            <svg class="chart sunburst-svg" id="sun-svg" viewBox="0 0 640 640" role="img" aria-labelledby="sun-title sun-break"></svg>
+          </div>
+        </div>
+        <details class="data-reveal">
+          <summary>Таблица состава по программам</summary>
+          <div class="table-wrap">
+            <table id="sun-table">
+              <thead>
+                <tr>
+                  <th>Группа</th>
+                  <th>Выпустились</th>
+                  <th>Ещё учатся</th>
+                  <th>Отчислены</th>
+                  <th>Всего</th>
+                  <th>Доля отчислений</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="figure" id="spread">
+        <p class="fig-label">Рис. 3. Распределение наблюдений</p>
+        <h2>Чем отличаются студенты разных статусов?</h2>
+        <p class="chapter-intro" id="bee-insight">Каждая точка — один студент. Разброс вбок нужен только чтобы точки не слипались; сравнивайте положение по вертикали и медиану.</p>
+        <div class="bee-controls">
+          <p class="control-caption">Что сравниваем</p>
+          <div class="segments" role="group" aria-label="Показатель beeswarm">
+            <button type="button" id="bee-age" aria-pressed="true">Возраст при поступлении</button>
+            <button type="button" id="bee-grade" aria-pressed="false">Балл 2 семестра</button>
+          </div>
+        </div>
+        <div class="bee-topline">
+          <p class="bee-detail" id="bee-detail">Наведите на точку или выберите её клавиатурой.</p>
+          <p class="legend">
+            <span><i class="dot grad"></i>Выпустились</span>
+            <span><i class="dot enr"></i>Ещё учатся</span>
+            <span><i class="dot drop"></i>Отчислены</span>
+            <span>┄ медиана</span>
+          </p>
+        </div>
+        <div class="surface">
+          <div class="bee-wrap">
+            <canvas id="bee-canvas" width="980" height="500" role="img" tabindex="0" aria-label="Beeswarm: распределение студентов по статусу"></canvas>
+          </div>
+          <div class="bee-stats" id="bee-stats"></div>
+          <p class="graph-footnote" id="bee-note">Возраст — полных лет на момент зачисления. Шкала баллов за предметы в датасете: от 0 до 20.</p>
+        </div>
+        <details class="data-reveal">
+          <summary>Таблица распределения</summary>
+          <div class="table-wrap">
+            <table id="bee-table">
+              <thead>
+                <tr>
+                  <th>Статус</th>
+                  <th>Студентов</th>
+                  <th>Медиана</th>
+                  <th>Без оценки</th>
+                  <th>Мин</th>
+                  <th>Макс</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section class="notes" id="notes">
+        <p class="fig-label">Примечания</p>
+        <div class="method-grid">
+          <article class="method-item">
+            <h3>Что считается итогом</h3>
+            <p>Поле Target фиксирует статус к концу нормального срока программы: выпустился, отчислен или ещё учится. «Ещё учится» — не текущий семестр, а то, что студент не закончил и не ушёл за отведённое время.</p>
+          </article>
+          <article class="method-item">
+            <h3>Стипендия — не причина</h3>
+            <p>Среди стипендиатов выпускников 76 %, без стипендии — 41 %. Это корреляция, не доказанный эффект выплаты: стипендию чаще получают те, кто уже учится лучше и не имеет долгов.</p>
+          </article>
+          <article class="method-item">
+            <h3>Ноль баллов</h3>
+            <p>Ноль за семестр чаще значит «нет сданных предметов / нет оценки», а не экзамен, написанный на ноль. Поэтому на beeswarm нули собраны отдельной плотной пачкой внизу, а не смешаны с низкими баллами.</p>
+          </article>
+          <article class="method-item">
+            <h3>Источник</h3>
+            <p>Realinho, Vieira Martins, Machado, Baptista. Predict Students’ Dropout and Academic Success. UCI Machine Learning Repository, 2021. <a href="https://doi.org/10.24432/C5MC89">doi:10.24432/C5MC89</a>. Лицензия CC BY 4.0. Один студент — одна строка, 4 424 наблюдения, пропусков нет.</p>
+          </article>
+        </div>
+        <details>
+          <summary>Состав групп программ и шкала оценок</summary>
+          <p class="tiny-note" style="margin-top:12px;max-width:850px">
+            Здравоохранение: сестринское дело, ветеринарный уход, гигиена полости рта.
+            Соц. работа: дневная и вечерняя программы.
+            Управление и маркетинг: менеджмент (день и вечер), реклама и маркетинг.
+            Дизайн и медиа: анимация и мультимедиа, коммуникационный дизайн, журналистика.
+            STEM и агро: информатика, агрономия, коневодство, биотопливо.
+            Образование и туризм: начальное образование, туризм.
+            Вступительный балл в исходных данных — шкала 0–200; средний балл предметов семестра — 0–20.
+          </p>
+        </details>
+      </section>
+    </main>
+
+    <footer class="colophon">
+      <p>Источник: Realinho et al. · <a href="https://archive.ics.uci.edu/dataset/697/predict+students+dropout+and+academic+success">UCI Predict Students’ Dropout and Academic Success</a></p>
+      <p>Лицензия CC BY 4.0</p>
+    </footer>
+  </div>
+
+  <div class="tooltip" id="tooltip" hidden></div>
+  <noscript>Для просмотра графиков включите JavaScript.</noscript>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
