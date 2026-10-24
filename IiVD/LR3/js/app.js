@@ -245,7 +245,7 @@
       const sel = encodeSel(ln);
       const on = state.skSel && state.skSel === sel;
       const dim = state.skSel && !on;
-      html += `<path class="sk-link" data-sel="${sel}" d="${ln.d}" fill="${ln.fill}" fill-opacity="${dim ? 0.07 : on ? 0.72 : 0.38}"></path>`;
+      html += `<path class="sk-link${on ? " is-on" : ""}${dim ? " is-dim" : ""}" data-sel="${sel}" d="${ln.d}" fill="${ln.fill}"></path>`;
     });
     function nodesHtml(pack, kind, labels, colors) {
       let s = "";
@@ -253,7 +253,7 @@
         const fill = colors ? colors[n.i] : INK;
         const sel = kind + ":" + n.i;
         const on = state.skSel === sel;
-        s += `<rect class="sk-node" data-sel="${sel}" x="${n.x}" y="${n.y}" width="${W}" height="${n.h}" rx="1.5" fill="${fill}"></rect>`;
+        s += `<rect class="sk-node${on ? " is-on" : ""}" data-sel="${sel}" x="${n.x}" y="${n.y}" width="${W}" height="${n.h}" rx="1.5" fill="${fill}"></rect>`;
         const labelX = kind === "s1" ? n.x - 8 : n.x + W + 8;
         const anchor = kind === "s1" ? "end" : "start";
         const ly = n.y + n.h / 2 + 4;
@@ -386,6 +386,7 @@
   }
 
   function renderSun(rows) {
+    sunHot = null;
     const svg = $("sun-svg");
     const g = sunCounts(rows);
     const totals = g.map((row) => row[0] + row[1] + row[2]);
@@ -431,9 +432,11 @@
         b += db;
       }
     }
+    html += '<g id="sun-slices">';
     for (const sl of slices) {
-      html += `<path class="sun-arc" data-kind="${sl.kind}" data-i="${sl.i}" data-t="${sl.t ?? ""}" d="${arcPath(cx, cy, sl.r0, sl.r1, sl.a0, sl.a1)}" fill="${sl.fill}" stroke="${SHEET}" stroke-width="2"></path>`;
+      html += `<path class="sun-arc" data-kind="${sl.kind}" data-i="${sl.i}" data-t="${sl.t ?? ""}" data-a0="${sl.a0}" data-a1="${sl.a1}" d="${arcPath(cx, cy, sl.r0, sl.r1, sl.a0, sl.a1)}" fill="${sl.fill}"></path>`;
     }
+    html += "</g>";
     if (state.sunGroup == null) {
       let a = 0;
       for (let i = 0; i < 6; i++) {
@@ -491,6 +494,27 @@
       if (!totals[i]) return "";
       return `<tr><td>${name}</td><td>${num(g[i][0])}</td><td>${num(g[i][1])}</td><td>${num(g[i][2])}</td><td>${num(totals[i])}</td><td>${pct(g[i][2], totals[i])}</td></tr>`;
     }).join("");
+  }
+
+  let sunHot = null;
+  function setSunHot(el) {
+    if (sunHot === el) return;
+    if (sunHot) {
+      sunHot.classList.remove("is-hot");
+      sunHot.style.removeProperty("--tx");
+      sunHot.style.removeProperty("--ty");
+    }
+    sunHot = el || null;
+    if (!el) return;
+    const a0 = +el.dataset.a0;
+    const a1 = +el.dataset.a1;
+    const mid = (a0 + a1) / 2;
+    const lift = 10;
+    el.style.setProperty("--tx", `${Math.sin(mid) * lift}px`);
+    el.style.setProperty("--ty", `${-Math.cos(mid) * lift}px`);
+    el.classList.add("is-hot");
+    const group = el.parentNode;
+    if (group) group.appendChild(el);
   }
 
   function sunTip(el, x, y) {
@@ -569,16 +593,39 @@
   }
 
   function fitDodge(items, maxHalf) {
-    let r = items.length > 1600 ? 1.45 : 1.7;
+    let r = items.length > 1400 ? 1.22 : 1.4;
     let nodes = dodge(items, r);
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
       const maxX = nodes.reduce((m, n) => Math.max(m, Math.abs(n.x)), 0);
-      if (maxX <= maxHalf || r < 1.05) return { nodes, r };
-      r *= 0.86;
+      if (maxX <= maxHalf || r < 0.95) break;
+      r *= 0.84;
       items.forEach((n) => { n.x = 0; });
       nodes = dodge(items, r);
     }
+    const maxX = nodes.reduce((m, n) => Math.max(m, Math.abs(n.x)), 0);
+    if (maxX > maxHalf && maxX > 0) {
+      const s = maxHalf / maxX;
+      nodes.forEach((n) => { n.x *= s; });
+    }
     return { nodes, r };
+  }
+
+  function unitRand(row, salt) {
+    const s = (row[AGE] + 1) * 12.9898 + (row[G2] + 1) * 78.233 + (row[C] + 1) * 37.719 + (row[T] + 1) * 54.13 + (row[A1] + 1) * 19.17 + salt * 91.3;
+    const x = Math.sin(s) * 43758.5453;
+    return x - Math.floor(x);
+  }
+
+  const BEE_W = 980;
+  const BEE_H = 660;
+
+  function visValue(row, metric) {
+    if (metric === "age") {
+      const cap = 46;
+      return Math.min(row[AGE], cap) + (unitRand(row, 1) - 0.5) * 0.9;
+    }
+    if (row[G2] === 0) return unitRand(row, 2) * 0.9;
+    return row[G2] + (unitRand(row, 2) - 0.5) * 0.2;
   }
 
   function renderBee(rows) {
@@ -587,30 +634,26 @@
     const groups = [[], [], []];
     for (const r of rows) groups[r[T]].push(r);
     const values = (arr) => arr.map((r) => (metric === "age" ? r[AGE] : r[G2]));
-    const allVals = values(rows);
-    let vmin = metric === "age" ? 16 : 0;
-    let vmax = metric === "age" ? 72 : 20;
-    if (allVals.length) {
-      vmin = metric === "age" ? Math.min(16, ...allVals) - 1 : 0;
-      vmax = metric === "age" ? Math.max(72, ...allVals) + 1 : 20;
-    }
-    const W = 980, H = 500;
-    const padL = 54, padR = 18, padT = 28, padB = 54;
+    const vmin = metric === "age" ? 16 : 0;
+    const vmax = metric === "age" ? 47 : 20;
+    const W = BEE_W, H = BEE_H;
+    const padL = 58, padR = 20, padT = 26, padB = 62;
     const innerW = W - padL - padR;
     const innerH = H - padT - padB;
-    const colW = innerW / 3;
+    const gap = 40;
+    const colW = (innerW - gap * 2) / 3;
     const yOf = (v) => padT + ((vmax - v) / (vmax - vmin)) * innerH;
     bee.points = [];
-    bee.r = 1.5;
+    bee.r = 1.3;
     if (rows.length) {
       for (let t = 0; t < 3; t++) {
-        const cx = padL + colW * t + colW / 2;
+        const cx = padL + t * (colW + gap) + colW / 2;
         const items = groups[t].map((row) => ({
           r: row, t, v: metric === "age" ? row[AGE] : row[G2],
-          y: yOf(metric === "age" ? row[AGE] : row[G2]),
+          y: yOf(visValue(row, metric)),
           x: 0, cx
         }));
-        const { nodes, r } = fitDodge(items, colW / 2 - 10);
+        const { nodes, r } = fitDodge(items, colW / 2 - 8);
         bee.r = r;
         for (const n of nodes) {
           n.px = n.cx + n.x;
@@ -620,7 +663,7 @@
         }
       }
     }
-    bee.layout = { padL, padR, padT, padB, W, H, innerW, innerH, colW, vmin, vmax, yOf, groups, metric };
+    bee.layout = { padL, padR, padT, padB, W, H, innerW, innerH, colW, gap, vmin, vmax, yOf, groups, metric };
     if (state.beeIndex >= bee.points.length) state.beeIndex = bee.points.length ? 0 : -1;
     drawBee();
     const meds = groups.map((arr) => median(values(arr)));
@@ -630,13 +673,13 @@
       $("bee-insight").textContent = m0 != null && m2 != null
         ? `Выпускники поступают раньше: медиана ${nf1.format(m0)} лет против ${nf1.format(m2)} у отчисленных.`
         : "Каждая точка — один студент.";
-      $("bee-note").textContent = "Возраст — полных лет на момент зачисления. Разброс вбок не несёт смысла, только разделяет точки.";
+      $("bee-note").textContent = "Возраст — полных лет на момент зачисления. Шкала обрезана на 45+: редкие старшие студенты собраны у верхней границы. Разброс вбок только разделяет точки внутри своей колонки.";
     } else {
       const z = zeros[2], d = groups[2].length;
       $("bee-insight").textContent = d
         ? `У ${num(z)} из ${num(d)} отчисленных нет оценки за 2 семестр — это отсутствие сданных предметов, не «ноль баллов».`
         : "Каждая точка — один студент.";
-      $("bee-note").textContent = "Шкала баллов за предметы: 0–20. Ноль чаще значит, что семестровой оценки нет.";
+      $("bee-note").textContent = "Шкала баллов за предметы: 0–20. Полоса у нуля — студенты без оценки за семестр, не экзамен на ноль баллов.";
     }
     $("bee-stats").innerHTML = TARGET.map((name, t) => {
       const m = meds[t];
@@ -661,36 +704,37 @@
     const ctx = canvas.getContext("2d");
     const L = bee.layout;
     const dpr = window.devicePixelRatio || 1;
-    const cssW = canvas.clientWidth || 980;
-    const cssH = cssW * (500 / 980);
+    const cssW = canvas.clientWidth || BEE_W;
+    const cssH = cssW * (BEE_H / BEE_W);
     canvas.style.height = cssH + "px";
     if (canvas.width !== Math.round(cssW * dpr) || canvas.height !== Math.round(cssH * dpr)) {
       canvas.width = Math.round(cssW * dpr);
       canvas.height = Math.round(cssH * dpr);
     }
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const sx = cssW / 980;
-    const sy = cssH / 500;
+    const sx = cssW / BEE_W;
+    const sy = cssH / BEE_H;
     ctx.clearRect(0, 0, cssW, cssH);
     ctx.save();
     ctx.scale(sx, sy);
     ctx.fillStyle = MUTED;
     ctx.font = "11px " + FONT_UI;
     ctx.textAlign = "right";
-    const ticks = L.metric === "age" ? [20, 30, 40, 50, 60, 70] : [0, 5, 10, 15, 20];
+    const ticks = L.metric === "age" ? [18, 20, 25, 30, 35, 40, 45] : [0, 5, 10, 15, 20];
     ticks.forEach((v) => {
       if (v < L.vmin || v > L.vmax) return;
       const y = L.yOf(v);
       ctx.fillStyle = RULE;
       ctx.fillRect(L.padL, y, L.innerW, 1);
       ctx.fillStyle = MUTED;
-      ctx.fillText(String(v), L.padL - 8, y + 4);
+      ctx.fillText(v === 45 && L.metric === "age" ? "45+" : String(v), L.padL - 8, y + 4);
     });
     ctx.textAlign = "center";
     ctx.fillStyle = INK;
     ctx.font = "700 13px " + FONT_UI;
     TARGET.forEach((name, t) => {
-      ctx.fillText(name, L.padL + L.colW * t + L.colW / 2, 490);
+      const cx = L.padL + t * (L.colW + (L.gap || 0)) + L.colW / 2;
+      ctx.fillText(name, cx, L.H - 16);
     });
     ctx.font = "11px " + FONT_UI;
     ctx.fillStyle = MUTED;
@@ -725,9 +769,11 @@
       const vals = L.groups[t].map((row) => (L.metric === "age" ? row[AGE] : row[G2]));
       const m = median(vals);
       if (m == null) continue;
-      const y = L.yOf(m);
-      const x0 = L.padL + L.colW * t + 18;
-      const x1 = L.padL + L.colW * (t + 1) - 18;
+      const vis = L.metric === "age" ? Math.min(m, 46) : m;
+      const y = L.yOf(vis);
+      const left = L.padL + t * (L.colW + (L.gap || 0));
+      const x0 = left + 14;
+      const x1 = left + L.colW - 14;
       ctx.beginPath();
       ctx.moveTo(x0, y);
       ctx.lineTo(x1, y);
@@ -842,15 +888,21 @@
 
   $("sun-svg").addEventListener("pointerover", (e) => {
     const el = e.target.closest(".sun-arc");
-    if (!el) return;
-    sunTip(el, e.clientX, e.clientY);
+    setSunHot(el);
+    if (el) sunTip(el, e.clientX, e.clientY);
+    else hideTip();
   });
   $("sun-svg").addEventListener("pointermove", (e) => {
     const el = e.target.closest(".sun-arc");
+    setSunHot(el);
     if (el) sunTip(el, e.clientX, e.clientY);
+    else hideTip();
   });
   $("sun-svg").addEventListener("pointerout", (e) => {
-    if (!e.relatedTarget || !$("sun-svg").contains(e.relatedTarget)) hideTip();
+    if (!e.relatedTarget || !$("sun-svg").contains(e.relatedTarget)) {
+      setSunHot(null);
+      hideTip();
+    }
   });
   $("sun-svg").addEventListener("click", (e) => {
     const el = e.target.closest(".sun-arc");
